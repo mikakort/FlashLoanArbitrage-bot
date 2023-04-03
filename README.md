@@ -1,13 +1,10 @@
-# Sample Hardhat Project
+# Flash Loan Arbitrage Bot
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+This project includes a smart contract that can loan tokenA from the aave protocol, swap tokenA for tokenB on Uniswap or Curve and swap back tokenB for tokenA on Curve or Uniswap respectively.
 
 Try running some of the following tasks:
 
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
+npx hardhat run --network mainnet scripts/deploy-flashloan-arb.js
+npx hardhat run scripts/arbitrageBot.js --network mainnet
 ```
