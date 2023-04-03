@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-
 // DONE
 
 contract TokenSwap is Ownable {
@@ -50,7 +49,7 @@ contract TokenSwap is Ownable {
         );
 
         // Calculate the amount of tokenB to be received
-        uint256 amountB = (i != 0) ? dx / (10 ** 12) * rate : dx * (10 ** 12) * rate;
+        uint256 amountB = (i != 0) ? (dx / (10 ** 12)) * rate : dx * (10 ** 12) * rate;
 
         // Check that the contract has enough balance of tokenB
         require(tokenB.balanceOf(address(this)) >= amountB, "Insufficient balance of tokenB");

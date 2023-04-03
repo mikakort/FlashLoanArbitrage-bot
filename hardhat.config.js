@@ -15,13 +15,17 @@ module.exports = {
     },
     networks: {
         goerli: {
-            url: process.env.GOERLI_RPC_URL,
-            accounts: [process.env.PRIVATE_KEY_GOERLI],
+            url: process.env.GOERLI_RPC_URL.toString(),
+            accounts: [process.env.PRIVATE_KEY_GOERLI.toString()],
         },
-        sepolia: {
-            url: process.env.SEPOLIA_RPC_URL,
-            accounts: [process.env.PRIVATE_KEY_GOERLI], // same priv. key
+        mainnet: {
+            url: process.env.ALCHEMY_MAINNET_RPC_URL.toString(),
+            accounts: [process.env.PRIVATE_KEY_GOERLI.toString()],
         },
+        // ,sepolia: {
+        //     url: process.env.SEPOLIA_RPC_URL,
+        //     accounts: [process.env.PRIVATE_KEY_GOERLI],
+        // },
     },
     etherscan: {
         apiKey: {

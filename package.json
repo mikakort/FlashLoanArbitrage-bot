@@ -24,7 +24,9 @@
     "@uniswap/lib": "^4.0.1-alpha",
     "@uniswap/sdk-core": "^3.2.0",
     "@uniswap/v3-sdk": "^3.9.0",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "solc": "^0.8.19",
+    "web3": "^1.9.0"
   },
   "description": "This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.",
   "version": "1.0.0",
