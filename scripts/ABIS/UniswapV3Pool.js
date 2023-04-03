@@ -1,4 +1,4 @@
-const poolABI = [
+const poolABI_Uniswap = [
     { inputs: [], stateMutability: "nonpayable", type: "constructor" },
     {
         anonymous: false,
@@ -403,4 +403,4 @@ const poolABI = [
     },
 ];
 
-module.exports = poolABI;
+module.exports = poolABI_Uniswap;
