@@ -9,7 +9,7 @@ import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 
 interface ICurvePool {
-    function exchange(uint128 i, uint128 j, uint256 dx, uint256 dy, bool use_eth) external;
+    function exchange(uint128 i, uint128 j, uint256 dx, uint256 dy) external;
 }
 
 contract FlashLoanArbitrage is FlashLoanSimpleReceiverBase {
@@ -37,14 +37,14 @@ contract FlashLoanArbitrage is FlashLoanSimpleReceiverBase {
 
     function swapExactInputSingle(
         uint256 amountIn,
-        address _token0,
-        address _token1
+        address _token1,
+        address _token0
     ) internal returns (uint256 amountOut) {
         TransferHelper.safeApprove(_token0, address(swapRouter), amountIn);
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
-            tokenIn: _token0,
-            tokenOut: _token1,
+            tokenIn: _token1,
+            tokenOut: _token0,
             fee: 3000,
             recipient: address(this),
             deadline: block.timestamp,
@@ -55,20 +55,10 @@ contract FlashLoanArbitrage is FlashLoanSimpleReceiverBase {
         amountOut = swapRouter.exactInputSingle(params);
     }
 
-    function swapOnCurve(
-        address _token0,
-        address _token1,
-        uint256 _amount,
-        bool normal
-    ) internal returns (uint256) {
-        IERC20(_token0).approve(curveRouter, _amount);
-        if (normal) {
-            ICurvePool(curveRouter).exchange(1, 0, _amount, 0, false);
-        } else if (!normal) {
-            ICurvePool(curveRouter).exchange(0, 1, _amount, 0, false);
-        }
+    function swapOnCurve(uint256 _amount) internal {
+        IERC20(token0).approve(curveRouter, _amount);
 
-        return IERC20(_token1).balanceOf(address(this));
+        ICurvePool(curveRouter).exchange(2, 0, _amount, 0);
     }
 
     function executeOperation(
@@ -78,30 +68,25 @@ contract FlashLoanArbitrage is FlashLoanSimpleReceiverBase {
         address initiator,
         bytes calldata params
     ) external override returns (bool) {
-        uint256 amountOut;
+        uint256 initialBalance = IERC20(token1).balanceOf(address(this));
 
-        if (asset == token0) {
-            amountOut = swapExactInputSingle(amount, token0, token1);
+        swapOnCurve(amount);
 
-            swapOnCurve(token1, token0, amountOut, true);
-        } else if (asset == token1) {
-            amountOut = swapExactInputSingle(amount, token1, token0);
+        uint256 finalBalance = IERC20(token1).balanceOf(address(this));
+        uint256 tokensReceived = finalBalance - initialBalance;
 
-            swapOnCurve(token0, token1, amountOut, false);
-        } else {
-            revert("borrowed asset doesn't match arbitrage asset");
-        }
+        uint256 amountOut = swapExactInputSingle(tokensReceived, token1, token0);
 
         uint256 amountOwed = amount + premium;
-        require(IERC20(asset).balanceOf(address(this)) >= amountOwed, "not profitable");
+        require(amountOut >= amountOwed, "not profitable");
         IERC20(asset).approve(address(POOL), amountOwed);
 
         return true;
     }
 
-    function requestFlashLoan(address _token, uint256 _amount) public {
+    function requestFlashLoan(uint256 _amount) public onlyOwner {
         address receiverAddress = address(this);
-        address asset = _token;
+        address asset = token0;
         uint256 amount = _amount;
         bytes memory params = "";
         uint16 referralCode = 0;

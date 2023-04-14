@@ -22,6 +22,7 @@
     "@chainlink/contracts": "^0.6.1",
     "@openzeppelin/contracts": "^4.7.3",
     "@uniswap/lib": "^4.0.1-alpha",
+    "@uniswap/sdk": "^3.0.3",
     "@uniswap/sdk-core": "^3.2.0",
     "@uniswap/v3-sdk": "^3.9.0",
     "dotenv": "^16.0.3",

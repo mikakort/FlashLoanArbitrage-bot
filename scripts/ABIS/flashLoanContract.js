@@ -89,7 +89,6 @@ const contractABI = [
     },
     {
         inputs: [
-            { internalType: "address", name: "_token", type: "address" },
             { internalType: "uint256", name: "_amount", type: "uint256" },
         ],
         name: "requestFlashLoan",
